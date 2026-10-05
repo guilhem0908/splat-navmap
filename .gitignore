@@ -10,8 +10,6 @@ dist/
 
 # Local outputs that scripts regenerate
 out/
-assets/scenes/*.ply
-!assets/scenes/.gitkeep
 
 # Node (only used through npx for the web export)
 node_modules/

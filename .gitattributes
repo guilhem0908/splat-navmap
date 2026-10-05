@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.png binary
+*.gif binary
+*.pgm binary
+*.ply binary
+*.sog binary
+*.splat binary
