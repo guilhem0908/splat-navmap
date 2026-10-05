@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# Local outputs that scripts regenerate
+out/
+assets/scenes/*.ply
+!assets/scenes/.gitkeep
+
+# Node (only used through npx for the web export)
+node_modules/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
