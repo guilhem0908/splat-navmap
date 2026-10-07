@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check .
+      - name: Tests (CPU, fast subset)
+        run: pytest -m "not slow"
+      - name: README numbers match the committed results
+        run: python scripts/check_readme.py
+      - name: Benchmark smoke run (2 scenes, 10 pairs)
+        run: python scripts/reproduce.py --quick --jobs 2
