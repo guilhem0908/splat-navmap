@@ -5,8 +5,9 @@
 
 Two kinds of numbers are covered. Tables between ``<!-- table:NAME -->`` and
 ``<!-- /table:NAME -->`` are rendered from ``results/summary.csv`` and must match line by line.
-Every number quoted in the prose is listed in :func:`claims`; each rendered string must appear
-verbatim in the README.
+The results and timings quoted in the prose are listed in :func:`claims`; each rendered string
+must appear verbatim in the README. Setup facts (scene size, filter sizes, the wording of the
+timing note) are not checked.
 """
 
 from __future__ import annotations
@@ -66,6 +67,21 @@ def pct(row: dict, name: str) -> str:
     return f"{100 * int(row[name]) / int(row['pairs']):.1f} %"
 
 
+def failures(row: dict) -> int:
+    """Pairs that end unreachable or colliding (valid, collision and unreachable partition them)."""
+    return int(row["collisions"]) + int(row["unreachable"])
+
+
+def failed(row: dict) -> str:
+    return f"{100 * failures(row) / int(row['pairs']):.1f} %"
+
+
+def quality(row: dict) -> tuple[float, float, float]:
+    """Precision, recall and IoU from the raw cell counts, so that a value is rounded once."""
+    tp, fp, fn = (int(row[name]) for name in ("tp", "fp", "fn"))
+    return tp / max(tp + fp, 1), tp / max(tp + fn, 1), tp / max(tp + fp + fn, 1)
+
+
 def ratio(row: dict) -> str:
     return f"{float(row['mean_ratio']):.3f}" if row["mean_ratio"] else "n/a"
 
@@ -85,8 +101,8 @@ def sweep_table(results: Results) -> list[str]:
     for method, label in METHODS:
         for tau in (0.1, 0.3, 0.5, 0.7, 0.9):
             row = results.threshold("moderate", method, tau)
-            body.append([label, f"{tau:.1f}", f"{float(row['precision']):.3f}",
-                         f"{float(row['recall']):.3f}", f"{float(row['iou']):.3f}",
+            precision, recall, iou = quality(row)
+            body.append([label, f"{tau:.1f}", f"{precision:.3f}", f"{recall:.3f}", f"{iou:.3f}",
                          count(row, "collisions"), count(row, "unreachable"), ratio(row)])
     return table(header, body, left=2)
 
@@ -168,23 +184,33 @@ def claims(results: Results) -> dict[str, str]:
                 for size in (4, 10) for m, _ in METHODS}
     centres, footprint = sweep["centres"][0.3], sweep["footprint"][0.5]
     centres_half = sweep["centres"][0.5]
+    # the threshold at which centre counting fails the fewest pairs, among all those benchmarked
+    centre_taus = sorted(float(row["tau"]) for row in results.rows
+                         if (row["experiment"], row["defect"], row["method"], row["band"],
+                             row["planner"], row["min_component"])
+                         == ("threshold", "moderate", "centres", DEFAULT_BAND, "astar", "1"))
+    best_tau = min(centre_taus,
+                   key=lambda tau: failures(results.threshold("moderate", "centres", tau)))
     return {
         "scenes": f"{len(config['seeds'])} scenes",
         "pairs": f"{pairs:,} start-goal pairs",
         "robot_radius": f"radius {robot['radius']:.2f} m",
         "robot_body": f"body from {robot['ground_clearance']:.2f} to {robot['height']:.2f} m",
         "band": f"band {guarded_lo:.2f} to {guarded_hi:.2f} m",
-        "centres_0.3": f"τ = 0.3 leaves {pct(centres, 'unreachable')} of feasible pairs "
-                       "unreachable",
+        "centres_best_tau": f"centre counting is best near τ = {best_tau:.1f}",
+        "centres_fail": f"still fails {failed(centres)} of feasible pairs "
+                        f"({pct(centres, 'unreachable')} unreachable, "
+                        f"{pct(centres, 'collisions')} colliding)",
         "centres_0.5": f"τ = 0.5 sends {pct(centres_half, 'collisions')} of paths through real "
                        "geometry",
-        "footprint_0.5": f"at τ = 0.5 leaves {pct(footprint, 'unreachable')} unreachable and "
-                         f"{pct(footprint, 'collisions')} colliding",
+        "footprint_0.5": f"footprint accumulation at τ = 0.5 fails {failed(footprint)} "
+                         f"({pct(footprint, 'unreachable')} unreachable, "
+                         f"{pct(footprint, 'collisions')} colliding)",
         "footprint_0.5_spread": f"collides on {pct(footprint, 'collisions')} of pairs overall and "
                                 f"on up to {float(footprint['collision_pct_max']):.1f} % in the "
                                 "worst scene",
-        "iou_footprint_0.5": f"IoU {float(footprint['iou']):.3f}",
-        "iou_centres_0.3": f"{float(centres['iou']):.3f} for centres",
+        "iou_footprint_0.5": f"IoU {quality(footprint)[2]:.3f}",
+        "iou_centres_0.3": f"{quality(centres)[2]:.3f} for centres",
         "severe_unreachable": f"({pct(severe['centres'], 'unreachable')} and "
                               f"{pct(severe['footprint'], 'unreachable')} of pairs unreachable)",
         "floaters_alone": f"{pct(single['floaters', 'centres'], 'unreachable')} unreachable) and "
