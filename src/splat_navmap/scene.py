@@ -109,7 +109,7 @@ def generate_scene(seed: int, robot: Robot | None = None, max_attempts: int = 20
 
 
 def showcase_scene() -> Scene:
-    """The scene shipped as a web asset and used for the figures."""
+    """The scene used for the timings."""
     return generate_scene(SHOWCASE_SEED)
 
 

@@ -11,9 +11,6 @@ dist/
 # Local outputs that scripts regenerate
 out/
 
-# Node (only used through npx for the web export)
-node_modules/
-
 # Editors / OS
 .vscode/
 .idea/
