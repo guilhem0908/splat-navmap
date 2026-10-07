@@ -165,4 +165,4 @@ tests/              one file per module
 
 ---
 
-Guilhem Carmouze - robotics engineering student, UPSSITECH (University of Toulouse) - [LinkedIn](https://www.linkedin.com/in/guilhem-carmouze/) - https://guilhem0908.github.io
+Guilhem Carmouze - robotics engineering student, UPSSITECH (University of Toulouse) - LinkedIn https://www.linkedin.com/in/guilhem-carmouze/ - https://guilhem0908.github.io
