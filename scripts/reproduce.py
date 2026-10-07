@@ -1,6 +1,6 @@
 """Regenerate ``results/`` and the figures under ``docs/`` from fixed seeds.
 
-    python scripts/reproduce.py              # full benchmark, then figures
+    python scripts/reproduce.py --jobs 4     # full benchmark, then figures
     python scripts/reproduce.py --figures    # redraw the figures from the committed results
     python scripts/reproduce.py --quick      # 2 scenes x 10 pairs into out/quick (smoke test)
     python scripts/reproduce.py --cache out/cache   # keep each finished scene, resume after a crash
@@ -185,7 +185,8 @@ def main() -> None:
     parser.add_argument("--quick", action="store_true", help="tiny run into out/quick")
     parser.add_argument("--figures", action="store_true", help="only redraw the figures")
     parser.add_argument("--cache", type=Path, help="folder that keeps finished scenes (resume)")
-    parser.add_argument("--jobs", type=int, help="worker processes (default: CPUs / 4)",
+    parser.add_argument("--jobs", type=int,
+                        help="worker processes (default: one per 4 CPUs, at most 10)",
                         default=min(len(SEEDS), max(1, (os.cpu_count() or 2) // 4)))
     args = parser.parse_args()
 
