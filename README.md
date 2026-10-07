@@ -116,9 +116,9 @@ Linux or macOS (Python 3.11 or newer):
 git clone https://github.com/guilhem0908/splat-navmap && cd splat-navmap
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
-pytest -m "not slow"                    # about 1 minute
+pytest -m "not slow"                    # under a minute
 python scripts/check_readme.py          # README numbers against results/
-python scripts/reproduce.py --quick     # 2 scenes, about 3 minutes; the full run takes about 30 minutes on 4 processes
+python scripts/reproduce.py --quick     # 2 scenes, 1 to 3 minutes; the full run takes about 30 minutes on 4 processes
 splat-navmap generate --seed 3 --defects mild --out out/flat.ply --truth out/truth
 splat-navmap extract out/flat.ply --method footprint --tau 0.5 --min-component 4 --out out/flat
 splat-navmap plan out/flat.yaml --start 1 1 --goal 8 6 --planner theta --preview out/plan.png
