@@ -81,9 +81,9 @@ def run_cached(conditions: list[Condition], seeds: tuple[int, ...], pairs: int, 
     """
     cache = cache / hashlib.sha1(repr((conditions, pairs)).encode()).hexdigest()[:12]
     cache.mkdir(parents=True, exist_ok=True)
-    todo = [seed for seed in seeds if not (cache / f"scene{seed}.json").exists()]
+    pending = [seed for seed in seeds if not (cache / f"scene{seed}.json").exists()]
     with ProcessPoolExecutor(max_workers=jobs) as pool:
-        futures = {pool.submit(evaluate_scene, seed, conditions, pairs): seed for seed in todo}
+        futures = {pool.submit(evaluate_scene, seed, conditions, pairs): seed for seed in pending}
         for future in as_completed(futures):
             (cache / f"scene{futures[future]}.json").write_text(json.dumps(future.result()))
             print(f"scene {futures[future]} done", flush=True)

@@ -38,7 +38,7 @@ CORRECT, INTERIOR, HALO, REJECTED = "#2b2d33", "#c9c8c2", "#e6e9ef", "#cfd3da"
 DEFECT_ORDER = ("clean", "mild", "moderate", "severe")
 GIF_SIZE = (900, 600)  # pixels
 GIF_FRAME_MS = 450
-GIF_COLORS = 48
+GIF_COLORS = 160
 
 plt.rcParams.update({
     "font.family": "DejaVu Sans", "font.size": 9, "text.color": INK, "axes.edgecolor": "#c3c2b7",
@@ -203,10 +203,10 @@ def save_gif(frames: Sequence[Image.Image], path: Path) -> None:
 def plot_tradeoff(summary: Sequence[dict], path: Path) -> None:
     """Small multiples: collision and false-unreachable rates against the threshold."""
     rows = [r for r in summary if r["experiment"] == "threshold"]
-    metrics = (("collision", "planned paths that collide"),
-               ("unreachable", "feasible pairs declared unreachable"))
+    metrics = (("collision", "paths through real geometry"),
+               ("unreachable", "feasible pairs unreachable"))
     fig, axes = plt.subplots(2, 4, figsize=(10, 4.9), sharex=True, sharey="row")
-    fig.subplots_adjust(left=0.065, right=0.985, top=0.80, bottom=0.11, wspace=0.08, hspace=0.22)
+    fig.subplots_adjust(left=0.075, right=0.985, top=0.80, bottom=0.11, wspace=0.12, hspace=0.22)
     for col, defect in enumerate(DEFECT_ORDER):
         for row, (metric, label) in enumerate(metrics):
             ax = axes[row, col]
@@ -221,7 +221,8 @@ def plot_tradeoff(summary: Sequence[dict], path: Path) -> None:
                         linewidth=2, marker="o", markersize=4.5, markeredgecolor=SURFACE,
                         markeredgewidth=1, label=SERIES_LABEL[method], solid_capstyle="round")
             ax.set_ylim(-3, 103)
-            ax.set_xlim(0, 1)
+            ax.set_xlim(-0.02, 1.02)
+            ax.set_xticks([0, 0.25, 0.5, 0.75, 1], ["0", "0.25", "0.5", "0.75", "1"])
             ax.grid(axis="y", color=GRIDLINE, linewidth=0.8)
             ax.set_axisbelow(True)
             ax.tick_params(length=0)
@@ -236,9 +237,9 @@ def plot_tradeoff(summary: Sequence[dict], path: Path) -> None:
     handles, labels = axes[0, 0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper right", bbox_to_anchor=(0.985, 0.955), ncols=2,
                frameon=False, fontsize=9)
-    fig.text(0.065, 0.955, "A low threshold blocks the robot, a high one sends it through walls",
+    fig.text(0.075, 0.955, "A low threshold seals the doors, a high one sends paths through walls",
              fontsize=12, weight="bold", va="center")
-    fig.text(0.065, 0.895, "Mean over the seeded scenes; the band spans the best and the worst "
+    fig.text(0.075, 0.895, "Pooled over the seeded scenes; the band spans the best and the worst "
              "scene. Height band 0.05 to 0.40 m, robot radius 0.20 m.", fontsize=8.5,
              color=SECONDARY, va="center")
     fig.savefig(path, dpi=150)
