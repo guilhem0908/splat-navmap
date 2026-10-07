@@ -1,0 +1,113 @@
+{
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "pairs_per_scene": 100,
+  "robot": {
+    "radius": 0.2,
+    "height": 0.4,
+    "ground_clearance": 0.02
+  },
+  "thresholds": [
+    0.02,
+    0.05,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9
+  ],
+  "bands": {
+    "body": [
+      0.02,
+      0.4
+    ],
+    "guarded": [
+      0.05,
+      0.4
+    ],
+    "floor": [
+      0.0,
+      0.4
+    ],
+    "guard10": [
+      0.1,
+      0.4
+    ],
+    "slice": [
+      0.18,
+      0.22
+    ],
+    "short": [
+      0.05,
+      0.2
+    ],
+    "tall": [
+      0.05,
+      0.9
+    ]
+  },
+  "defects": {
+    "clean": {
+      "floater_density": 0.0,
+      "hole_density": 0.0,
+      "weak_fraction": 0.0,
+      "thickness": 0.004
+    },
+    "mild": {
+      "floater_density": 1.0,
+      "hole_density": 0.03,
+      "weak_fraction": 0.05,
+      "thickness": 0.008
+    },
+    "moderate": {
+      "floater_density": 3.0,
+      "hole_density": 0.08,
+      "weak_fraction": 0.15,
+      "thickness": 0.015
+    },
+    "severe": {
+      "floater_density": 8.0,
+      "hole_density": 0.15,
+      "weak_fraction": 0.3,
+      "thickness": 0.025
+    },
+    "floaters": {
+      "floater_density": 8.0,
+      "hole_density": 0.0,
+      "weak_fraction": 0.0,
+      "thickness": 0.004
+    },
+    "holes": {
+      "floater_density": 0.0,
+      "hole_density": 0.15,
+      "weak_fraction": 0.0,
+      "thickness": 0.004
+    },
+    "weak": {
+      "floater_density": 0.0,
+      "hole_density": 0.0,
+      "weak_fraction": 0.3,
+      "thickness": 0.004
+    },
+    "thickness": {
+      "floater_density": 0.0,
+      "hole_density": 0.0,
+      "weak_fraction": 0.0,
+      "thickness": 0.025
+    }
+  }
+}
